@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valle Autos Veículos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0a0a0a; /* Fundo escuro */
+            color: #ffffff;
+        }
+        .hero-bg {
+            background-image: linear-gradient(to right, rgba(10, 10, 10, 0.9) 20%, rgba(10, 10, 10, 0.3) 100%), url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=1919');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-bg {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+        }
+        .btn-red {
+            background-color: #a31616; /* Vermelho escuro inspirado na logo */
+            transition: background-color 0.3s;
+        }
+        .btn-red:hover {
+            background-color: #cc1b1b;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Cabeçalho (Header) -->
+    <header class="border-b border-zinc-800 bg-black/90 sticky top-0 z-50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo Falsa -->
+            <div class="flex items-center gap-2">
+                <div class="w-12 h-12 rounded-full border-2 border-zinc-600 flex items-center justify-center bg-black relative overflow-hidden">
+                    <div class="absolute inset-0 border-4 border-black rounded-full"></div>
+                    <span class="text-red-700 font-bold text-2xl" style="transform: scaleY(-1); margin-bottom: 8px;">V</span>
+                    <span class="text-red-700 font-bold text-2xl absolute mt-4">V</span>
+                </div>
+            </div>
+
+            <!-- Menu -->
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-zinc-300">
+                <a href="#" class="text-red-500 border-b-2 border-red-500 pb-1">Início</a>
+                <a href="#" class="hover:text-white transition-colors">Estoque</a>
+                <a href="#financiamento" class="hover:text-white transition-colors">Financiamento</a>
+                <a href="#" class="hover:text-white transition-colors">Sobre Nós</a>
+                <a href="#" class="hover:text-white transition-colors">Contato</a>
+            </nav>
+
+            <!-- Pesquisa -->
+            <div class="hidden md:flex items-center">
+                <div class="relative">
+                    <input type="text" placeholder="Buscar Veículo..." class="bg-zinc-900 border border-zinc-700 text-white px-4 py-2 rounded-l-md focus:outline-none focus:border-red-600 text-sm w-48">
+                    <button class="btn-red px-4 py-2 rounded-r-md absolute right-0 top-0 bottom-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Menu Mobile -->
+            <button class="md:hidden text-zinc-300 hover:text-white">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Área Principal (Hero) -->
+    <section class="hero-bg h-[500px] flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="max-w-2xl">
+                <h2 class="text-red-600 font-bold tracking-wider text-xl mb-2">VEÍCULOS EXCLUSIVOS.</h2>
+                <h1 class="text-5xl font-extrabold text-white mb-4 leading-tight">EXPERIÊNCIA PREMIUM.</h1>
+                <p class="text-xl text-zinc-300 mb-8">Encontre o seu próximo destino.</p>
+                <button class="btn-red text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-red-900/50 transition-all">
+                    Fale com um Especialista
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conteúdo (Filtros e Carros) -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex flex-col md:flex-row gap-8">
+        
+        <!-- Barra Lateral (Categorias) -->
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <div class="card-bg rounded-xl p-6">
+                <h3 class="text-lg font-bold mb-6 text-white uppercase tracking-wider">Categorias</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-center justify-between group cursor-pointer">
+                        <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors">
+                            <i class="fas fa-car-side"></i>
+                            <span>SUVs</span>
+                        </div>
+                        <!-- Toggle Ativo -->
+                        <div class="w-8 h-4 bg-red-600 rounded-full relative">
+                            <div class="w-3 h-3 bg-white rounded-full absolute right-1 top-0.5"></div>
+                        </div>
+                    </li>
+                    <li class="flex items-center justify-between group cursor-pointer">
+                        <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors">
+                            <i class="fas fa-car"></i>
+                            <span>Sedans</span>
+                        </div>
+                        <!-- Toggle Inativo -->
+                        <div class="w-8 h-4 bg-zinc-700 rounded-full relative">
+                            <div class="w-3 h-3 bg-zinc-400 rounded-full absolute left-1 top-0.5"></div>
+                        </div>
+                    </li>
+                    <li class="flex items-center justify-between group cursor-pointer">
+                        <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors">
+                            <i class="fas fa-flag-checkered"></i>
+                            <span>Esportivos</span>
+                        </div>
+                        <div class="w-8 h-4 bg-red-600 rounded-full relative">
+                            <div class="w-3 h-3 bg-white rounded-full absolute right-1 top-0.5"></div>
+                        </div>
+                    </li>
+                    <li class="flex items-center justify-between group cursor-pointer">
+                        <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors">
+                            <i class="fas fa-truck-pickup"></i>
+                            <span>Caminhonetes</span>
+                        </div>
+                        <div class="w-8 h-4 bg-zinc-700 rounded-full relative">
+                            <div class="w-3 h-3 bg-zinc-400 rounded-full absolute left-1 top-0.5"></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Grade de Veículos -->
+        <div class="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Carro 1 -->
+            <div class="card-bg rounded-xl p-4 flex flex-col sm:flex-row gap-4 hover:border-red-900 transition-colors">
+                <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=300" alt="Mercedes C300" class="w-full sm:w-48 h-32 object-cover rounded-lg">
+                <div class="flex flex-col justify-between flex-grow">
+                    <div>
+                        <h4 class="font-bold text-lg leading-tight mb-2 uppercase">MERCEDES-BENZ<br>C300 (2024)</h4>
+                        <div class="flex gap-4 text-xs text-zinc-400 mb-4">
+                            <div class="text-center">
+                                <span class="block font-bold text-white">20 km</span>
+                                KM
+                            </div>
+                            <div class="text-center">
+                                <span class="block font-bold text-white">Aut.</span>
+                                Transmissão
+                            </div>
+                            <div class="text-center">
+                                <span class="block font-bold text-white">2.0</span>
+                                Motor
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-red w-full text-white text-sm font-bold py-2 rounded-md transition-colors">
+                        Ver Detalhes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Carro 2 -->
+            <div class="card-bg rounded-xl p-4 flex flex-col sm:flex-row gap-4 hover:border-red-900 transition-colors">
+                <img src="https://images.unsplash.com/photo-1629897048514-3dd7414cdf27?auto=format&fit=crop&q=80&w=300" alt="Toyota Corolla" class="w-full sm:w-48 h-32 object-cover rounded-lg bg-zinc-200">
+                <div class="flex flex-col justify-between flex-grow">
+                    <div>
+                        <h4 class="font-bold text-lg leading-tight mb-2 uppercase">TOYOTA COROLLA XEI<br>(2023)</h4>
+                        <div class="flex gap-4 text-xs text-zinc-400 mb-4">
+                            <div class="text-center">
+                                <span class="block font-bold text-white">30 mil</span>
+                                KM
+                            </div>
+                            <div class="text-center">
+                                <span class="block font-bold text-white">Aut.</span>
+                                Transmissão
+                            </div>
+                            <div class="text-center">
+                                <span class="block font-bold text-white">2.0</span>
+                                Motor
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-red w-full text-white text-sm font-bold py-2 rounded-md transition-colors">
+                        Ver Detalhes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Carro 3 -->
+            <div class="card-bg rounded-xl p-4 flex flex-col sm:flex-row gap-4 hover:border-red-900 transition-colors">
+                <img src="https://images.unsplash.com/photo-1559416523-140ddc3d238c?auto=format&fit=crop&q=80&w=300" alt="Caminhonete" class="w-full sm:w-48 h-32 object-cover rounded-lg">
+                <div class="flex flex-col justify-between flex-grow">
+                    <div>
+                        <h4 class="font-bold text-lg leading-tight mb-2 uppercase">CAMINHONETES<br>(TRUCKS)</h4>
+                        <div class="flex gap-4 text-xs text-zinc-400 mb-4">
+                            <div class="text-center">
+                                <span class="block font-bold text-white">50 mil</span>
+                                KM
+                            </div>
+                            <div class="text-center">
+                                <span class="block font-bold text-white">Aut.</span>
+                                Transmissão
+                            </div>
+                            <div class="text-center">
+                                <span class="block font-bold text-white">V6</span>
+                                Motor
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-red w-full text-white text-sm font-bold py-2 rounded-md transition-colors">
+                        Ver Detalhes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Espaço vazio ou mais carros poderiam ir aqui -->
+        </div>
+    </main>
+
+    <!-- Seção de Financiamento (Caixa Mágica) -->
+    <section id="financiamento" class="bg-zinc-900 py-16 border-t border-zinc-800">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-white mb-2">Simule o seu Financiamento</h2>
+            <p class="text-zinc-400 mb-8">Preencha os dados e fale com a nossa equipa diretamente pelo WhatsApp.</p>
+
+            <form class="card-bg p-6 rounded-xl flex flex-col gap-4 text-left">
+                <div>
+                    <label class="block text-zinc-300 text-sm font-bold mb-2">O seu Nome</label>
+                    <input type="text" id="nomeCliente" placeholder="Como se chama?" class="w-full bg-black border border-zinc-700 text-white px-4 py-2 rounded focus:outline-none focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-zinc-300 text-sm font-bold mb-2">Qual carro deseja?</label>
+                    <input type="text" id="carroDesejado" placeholder="Ex: Mercedes C300" class="w-full bg-black border border-zinc-700 text-white px-4 py-2 rounded focus:outline-none focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-zinc-300 text-sm font-bold mb-2">Valor da Entrada (R$)</label>
+                    <input type="number" id="valorEntrada" placeholder="Ex: 20000" class="w-full bg-black border border-zinc-700 text-white px-4 py-2 rounded focus:outline-none focus:border-red-600">
+                </div>
+                <button type="button" onclick="enviarParaWhatsApp()" class="btn-red w-full text-white font-bold py-3 rounded-md mt-4 text-lg">
+                    <i class="fab fa-whatsapp mr-2"></i> Pedir Simulação no WhatsApp
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Rodapé Simples -->
+    <footer class="bg-black border-t border-zinc-900 py-6 text-center text-zinc-500 text-sm">
+        <p>&copy; 2026 Valle Autos Veículos. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- O "Carteiro" (Script do WhatsApp) -->
+    <script>
+        function enviarParaWhatsApp() {
+            // Pega o que a pessoa escreveu nas caixas
+            const nome = document.getElementById('nomeCliente').value;
+            const carro = document.getElementById('carroDesejado').value;
+            const entrada = document.getElementById('valorEntrada').value;
+
+            // Se a pessoa não colocar o nome ou carro, o site avisa
+            if (!nome || !carro) {
+                alert("Por favor, preencha o seu nome e o carro!");
+                return;
+            }
+
+            // O número de telemóvel da loja (podes mudar depois)
+            const numeroLoja = "5511999999999"; 
+            
+            // Cria a mensagem automática
+            const mensagem = `Olá! O meu nome é ${nome}. Quero simular um financiamento para o carro: ${carro}. Tenho R$ ${entrada} para dar de entrada.`;
+            
+            // Abre o WhatsApp com a mensagem
+            const url = `https://wa.me/${numeroLoja}?text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
