@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valle Autos Veículos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+        .hero-bg {
+            background-image: linear-gradient(to right, rgba(10, 10, 10, 0.9) 20%, rgba(10, 10, 10, 0.3) 100%), url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=1919');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-bg {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+        }
+        .btn-red {
+            background-color: #a31616;
+            transition: background-color 0.3s;
+        }
+        .btn-red:hover {
+            background-color: #cc1b1b;
+        }
+
+        /* ── MOBILE NAV DRAWER ── */
+        #mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+        }
+        #mobile-menu.open {
+            display: block;
+        }
+        #mobile-menu-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+        }
+        #mobile-menu-drawer {
+            position: absolute;
+            top: 0; right: 0;
+            width: 280px;
+            max-width: 85vw;
+            height: 100%;
+            background: #111;
+            border-left: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            animation: slideFromRight 0.3s ease;
+            overflow-y: auto;
+        }
+        @keyframes slideFromRight {
+            from { transform: translateX(100%); }
+            to   { transform: translateX(0); }
+        }
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            border-bottom: 1px solid #222;
+            color: #d1d5db;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s, background 0.2s;
+        }
+        .mobile-nav-link:hover,
+        .mobile-nav-link.active {
+            color: #ef4444;
+            background: rgba(163,22,22,0.06);
+        }
+
+        /* ── CATEGORIES MOBILE COLLAPSE ── */
+        #categories-toggle {
+            display: none;
+        }
+        @media (max-width: 767px) {
+            #categories-toggle {
+                display: flex;
+            }
+            #categories-list {
+                display: none;
+            }
+            #categories-list.open {
+                display: block;
+            }
+        }
+
+        /* ── HERO MOBILE ── */
+        @media (max-width: 640px) {
+            .hero-section {
+                min-height: 380px;
+                height: auto !important;
+                padding: 48px 0;
+            }
+            .hero-title {
+                font-size: 2.2rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- ── MOBILE NAV DRAWER ── -->
+    <div id="mobile-menu">
+        <div id="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+        <div id="mobile-menu-drawer">
+            <div style="padding:20px 24px;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <div class="w-9 h-9 rounded-full border-2 border-zinc-600 flex items-center justify-center bg-black overflow-hidden relative">
+                        <span class="text-red-700 font-bold text-xl" style="transform:scaleY(-1);margin-bottom:6px">V</span>
+                        <span class="text-red-700 font-bold text-xl absolute mt-3">V</span>
+                    </div>
+                    <span style="font-weight:700;font-size:.95rem;color:#fff">Valle Autos</span>
+                </div>
+                <button onclick="closeMobileMenu()" style="background:none;border:none;color:#888;font-size:1.2rem;cursor:pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Search -->
+            <div style="padding:16px 24px;border-bottom:1px solid #222">
+                <div style="display:flex">
+                    <input type="text" id="mobile-search-input" placeholder="Buscar veículo..."
+                        oninput="filterVehicles(this.value)"
+                        style="flex:1;background:#222;border:1px solid #444;border-right:none;color:#fff;padding:9px 14px;font-size:.85rem;outline:none;border-radius:4px 0 0 4px">
+                    <button onclick="filterVehicles(document.getElementById('mobile-search-input').value)"
+                        style="background:#a31616;border:none;color:#fff;padding:9px 14px;cursor:pointer;border-radius:0 4px 4px 0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mobile-nav-link active"><i class="fas fa-home" style="color:#ef4444;width:16px;text-align:center"></i> Início</div>
+            <div class="mobile-nav-link" onclick="closeMobileMenu()"><i class="fas fa-car" style="width:16px;text-align:center"></i> Estoque</div>
+            <a href="#financiamento" class="mobile-nav-link" onclick="closeMobileMenu()"><i class="fas fa-file-invoice-dollar" style="width:16px;text-align:center"></i> Financiamento</a>
+            <div class="mobile-nav-link"><i class="fas fa-info-circle" style="width:16px;text-align:center"></i> Sobre Nós</div>
+            <div class="mobile-nav-link"><i class="fas fa-phone" style="width:16px;text-align:center"></i> Contato</div>
+
+            <div style="padding:24px;margin-top:auto">
+                <button onclick="scrollToFinanciamento()" class="btn-red" style="width:100%;color:#fff;font-weight:700;padding:12px;border:none;border-radius:8px;cursor:pointer;font-size:.9rem">
+                    <i class="fab fa-whatsapp" style="margin-right:8px"></i> Fale com um Especialista
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cabeçalho (Header) -->
+    <header class="border-b border-zinc-800 bg-black/90 sticky top-0 z-50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <div class="w-12 h-12 rounded-full border-2 border-zinc-600 flex items-center justify-center bg-black relative overflow-hidden">
+                    <div class="absolute inset-0 border-4 border-black rounded-full"></div>
+                    <span class="text-red-700 font-bold text-2xl" style="transform: scaleY(-1); margin-bottom: 8px;">V</span>
+                    <span class="text-red-700 font-bold text-2xl absolute mt-4">V</span>
+                </div>
+                <span class="hidden sm:block font-bold text-white text-sm tracking-wider">VALLE AUTOS</span>
+            </div>
+
+            <!-- Menu Desktop -->
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-zinc-300">
+                <a href="#" class="text-red-500 border-b-2 border-red-500 pb-1">Início</a>
+                <a href="#estoque" class="hover:text-white transition-colors">Estoque</a>
+                <a href="#financiamento" class="hover:text-white transition-colors">Financiamento</a>
+                <a href="#" class="hover:text-white transition-colors">Sobre Nós</a>
+                <a href="#" class="hover:text-white transition-colors">Contato</a>
+            </nav>
+
+            <!-- Pesquisa Desktop -->
+            <div class="hidden md:flex items-center">
+                <div class="relative">
+                    <input type="text" id="desktop-search-input" placeholder="Buscar Veículo..."
+                        oninput="filterVehicles(this.value)"
+                        class="bg-zinc-900 border border-zinc-700 text-white px-4 py-2 rounded-l-md focus:outline-none focus:border-red-600 text-sm w-48">
+                    <button onclick="filterVehicles(document.getElementById('desktop-search-input').value)"
+                        class="btn-red px-4 py-2 rounded-r-md absolute right-0 top-0 bottom-0 border-none cursor-pointer">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Menu Mobile Toggle -->
+            <button onclick="openMobileMenu()" class="md:hidden text-zinc-300 hover:text-white p-2" aria-label="Abrir menu">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Área Principal (Hero) -->
+    <section class="hero-bg hero-section h-[500px] flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="max-w-2xl">
+                <h2 class="text-red-600 font-bold tracking-wider text-xl mb-2">VEÍCULOS EXCLUSIVOS.</h2>
+                <h1 class="hero-title text-5xl font-extrabold text-white mb-4 leading-tight">EXPERIÊNCIA PREMIUM.</h1>
+                <p class="text-xl text-zinc-300 mb-8">Encontre o seu próximo destino.</p>
+                <button onclick="scrollToFinanciamento()" class="btn-red text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-red-900/50 transition-all border-none cursor-pointer">
+                    Fale com um Especialista
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conteúdo (Filtros e Carros) -->
+    <main id="estoque" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex flex-col md:flex-row gap-8">
+
+        <!-- Barra Lateral (Categorias) -->
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <div class="card-bg rounded-xl overflow-hidden">
+                <!-- Toggle visível só no mobile -->
+                <button id="categories-toggle" onclick="toggleCategories()"
+                    class="w-full flex items-center justify-between p-4 text-white font-bold uppercase tracking-wider text-sm"
+                    style="background:none;border:none;cursor:pointer">
+                    <span>Categorias</span>
+                    <i class="fas fa-chevron-down text-red-500" id="categories-chevron" style="transition:transform 0.3s"></i>
+                </button>
+
+                <!-- Título desktop -->
+                <div class="hidden md:block px-6 pt-6 pb-2">
+                    <h3 class="text-lg font-bold text-white uppercase tracking-wider">Categorias</h3>
+                </div>
+
+                <ul id="categories-list" class="space-y-4 px-6 pb-6 pt-2">
+                    <li class="flex items-center justify-between group cursor-pointer" onclick="filterByCategory('SUV')">
+                        <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors">
+                            <i class="fas fa-car-side"></i>
+                            <span>SUVs</span>
+                        </div>
+                        <div class="w-8 h-4 bg-red-600 rounded-full relative" id="toggle-suv">
+                            <div class="w-3 h-3 bg-white rounded-full absolute right-1 top-0.5"></div>
+                        </div>
+                    </li>
+                    <li class="flex items-center justify-between group cursor-pointer" onclick="filterByCategory('Sedan')">
+                        <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors">
+                            <i class="fas fa-car"></i>
+                            <span>Sedans</span>
+                        </div>
+                        <div class="w-8 h-4 bg-zinc-700 rounded-full relative" id="toggle-sedan">
+                            <div class="w-3 h-3 bg-zinc-400 rounded-full absolute left-1 top-0.5"></div>
+                        </div>
+                    </li>
+                    <li class="flex items-center justify-between group cursor-pointer" onclick="filterByCategory('Esportivo')">
+                        <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors">
+                            <i class="fas fa-flag-checkered"></i>
+                            <span>Esportivos</span>
+                        </div>
+                        <div class="w-8 h-4 bg-red-600 rounded-full relative" id="toggle-esportivo">
+                            <div class="w-3 h-3 bg-white rounded-full absolute right-1 top-0.5"></div>
+                        </div>
+                    </li>
+                    <li class="flex items-center justify-between group cursor-pointer" onclick="filterByCategory('Caminhonete')">
+                        <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors">
+                            <i class="fas fa-truck-pickup"></i>
+                            <span>Caminhonetes</span>
+                        </div>
+                        <div class="w-8 h-4 bg-zinc-700 rounded-full relative" id="toggle-caminhonete">
+                            <div class="w-3 h-3 bg-zinc-400 rounded-full absolute left-1 top-0.5"></div>
+                        </div>
+                    </li>
+                    <li class="pt-2 border-t border-zinc-700">
+                        <button onclick="filterByCategory('')" class="text-xs text-zinc-500 hover:text-red-400 transition-colors w-full text-left">
+                            <i class="fas fa-times mr-1"></i> Limpar filtro
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Grade de Veículos -->
+        <div class="flex-grow flex flex-col gap-4">
+            <!-- Mensagem sem resultado -->
+            <div id="no-results" class="hidden text-center py-16 text-zinc-500">
+                <i class="fas fa-search text-4xl mb-4 block text-zinc-700"></i>
+                <p class="text-lg">Nenhum veículo encontrado.</p>
+                <button onclick="filterVehicles('')" class="mt-4 text-red-500 text-sm hover:underline">Ver todos</button>
+            </div>
+
+            <div id="vehicles-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- Carro 1 -->
+                <div class="card-bg rounded-xl p-4 flex flex-col sm:flex-row gap-4 hover:border-red-900 transition-colors vehicle-card" data-marca="Mercedes-Benz" data-modelo="C300" data-cat="Sedan">
+                    <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=300" alt="Mercedes C300"
+                        class="w-full sm:w-48 h-40 sm:h-32 object-cover rounded-lg flex-shrink-0">
+                    <div class="flex flex-col justify-between flex-grow">
+                        <div>
+                            <h4 class="font-bold text-lg leading-tight mb-2 uppercase">MERCEDES-BENZ<br>C300 (2024)</h4>
+                            <div class="flex gap-4 text-xs text-zinc-400 mb-4">
+                                <div class="text-center">
+                                    <span class="block font-bold text-white">20 km</span>
+                                    KM
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-white">Aut.</span>
+                                    Transmissão
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-white">2.0</span>
+                                    Motor
+                                </div>
+                            </div>
+                            <p class="text-red-500 font-bold text-base">R$ 250.000</p>
+                        </div>
+                        <button onclick="scrollToFinanciamento('Mercedes-Benz C300')"
+                            class="btn-red w-full text-white text-sm font-bold py-2 rounded-md transition-colors border-none cursor-pointer mt-3">
+                            Ver Detalhes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Carro 2 -->
+                <div class="card-bg rounded-xl p-4 flex flex-col sm:flex-row gap-4 hover:border-red-900 transition-colors vehicle-card" data-marca="Toyota" data-modelo="Corolla XEI" data-cat="Sedan">
+                    <img src="https://images.unsplash.com/photo-1629897048514-3dd7414cdf27?auto=format&fit=crop&q=80&w=300" alt="Toyota Corolla"
+                        class="w-full sm:w-48 h-40 sm:h-32 object-cover rounded-lg bg-zinc-200 flex-shrink-0">
+                    <div class="flex flex-col justify-between flex-grow">
+                        <div>
+                            <h4 class="font-bold text-lg leading-tight mb-2 uppercase">TOYOTA COROLLA XEI<br>(2023)</h4>
+                            <div class="flex gap-4 text-xs text-zinc-400 mb-4">
+                                <div class="text-center">
+                                    <span class="block font-bold text-white">30 mil</span>
+                                    KM
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-white">Aut.</span>
+                                    Transmissão
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-white">2.0</span>
+                                    Motor
+                                </div>
+                            </div>
+                            <p class="text-red-500 font-bold text-base">R$ 142.900</p>
+                        </div>
+                        <button onclick="scrollToFinanciamento('Toyota Corolla XEI')"
+                            class="btn-red w-full text-white text-sm font-bold py-2 rounded-md transition-colors border-none cursor-pointer mt-3">
+                            Ver Detalhes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Carro 3 -->
+                <div class="card-bg rounded-xl p-4 flex flex-col sm:flex-row gap-4 hover:border-red-900 transition-colors vehicle-card" data-marca="Ford" data-modelo="Ranger XLS" data-cat="Caminhonete">
+                    <img src="https://images.unsplash.com/photo-1559416523-140ddc3d238c?auto=format&fit=crop&q=80&w=300" alt="Caminhonete"
+                        class="w-full sm:w-48 h-40 sm:h-32 object-cover rounded-lg flex-shrink-0">
+                    <div class="flex flex-col justify-between flex-grow">
+                        <div>
+                            <h4 class="font-bold text-lg leading-tight mb-2 uppercase">FORD RANGER XLS<br>(2022)</h4>
+                            <div class="flex gap-4 text-xs text-zinc-400 mb-4">
+                                <div class="text-center">
+                                    <span class="block font-bold text-white">50 mil</span>
+                                    KM
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-white">Aut.</span>
+                                    Transmissão
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-white">V6</span>
+                                    Motor
+                                </div>
+                            </div>
+                            <p class="text-red-500 font-bold text-base">R$ 185.000</p>
+                        </div>
+                        <button onclick="scrollToFinanciamento('Ford Ranger XLS')"
+                            class="btn-red w-full text-white text-sm font-bold py-2 rounded-md transition-colors border-none cursor-pointer mt-3">
+                            Ver Detalhes
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Seção de Financiamento -->
+    <section id="financiamento" class="bg-zinc-900 py-16 border-t border-zinc-800">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-white mb-2">Simule o seu Financiamento</h2>
+            <p class="text-zinc-400 mb-8">Preencha os dados e fale com a nossa equipa diretamente pelo WhatsApp.</p>
+
+            <div class="card-bg p-6 rounded-xl flex flex-col gap-4 text-left">
+                <div>
+                    <label class="block text-zinc-300 text-sm font-bold mb-2">O seu Nome</label>
+                    <input type="text" id="nomeCliente" placeholder="Como se chama?"
+                        class="w-full bg-black border border-zinc-700 text-white px-4 py-2 rounded focus:outline-none focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-zinc-300 text-sm font-bold mb-2">Qual carro deseja?</label>
+                    <input type="text" id="carroDesejado" placeholder="Ex: Mercedes C300"
+                        class="w-full bg-black border border-zinc-700 text-white px-4 py-2 rounded focus:outline-none focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-zinc-300 text-sm font-bold mb-2">Valor da Entrada (R$)</label>
+                    <input type="number" id="valorEntrada" placeholder="Ex: 20000"
+                        class="w-full bg-black border border-zinc-700 text-white px-4 py-2 rounded focus:outline-none focus:border-red-600">
+                </div>
+                <button type="button" onclick="enviarParaWhatsApp()"
+                    class="btn-red w-full text-white font-bold py-3 rounded-md mt-4 text-lg border-none cursor-pointer">
+                    <i class="fab fa-whatsapp mr-2"></i> Pedir Simulação no WhatsApp
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="bg-black border-t border-zinc-900 py-6 text-center text-zinc-500 text-sm">
+        <p>&copy; 2026 Valle Autos Veículos. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // ── MOBILE MENU ──
+        function openMobileMenu() {
+            document.getElementById('mobile-menu').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMobileMenu() {
+            document.getElementById('mobile-menu').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // ── CATEGORIES MOBILE COLLAPSE ──
+        function toggleCategories() {
+            const list = document.getElementById('categories-list');
+            const chevron = document.getElementById('categories-chevron');
+            list.classList.toggle('open');
+            chevron.style.transform = list.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        // ── SEARCH / FILTER ──
+        let activeCategory = '';
+
+        function filterVehicles(query) {
+            const q = (query || '').toLowerCase().trim();
+            const cards = document.querySelectorAll('.vehicle-card');
+            let visible = 0;
+
+            cards.forEach(card => {
+                const marca = card.dataset.marca.toLowerCase();
+                const modelo = card.dataset.modelo.toLowerCase();
+                const cat = card.dataset.cat;
+                const matchSearch = !q || (marca + ' ' + modelo).includes(q);
+                const matchCat = !activeCategory || cat === activeCategory;
+
+                if (matchSearch && matchCat) {
+                    card.style.display = '';
+                    visible++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            document.getElementById('no-results').classList.toggle('hidden', visible > 0);
+            // Sync both search inputs
+            document.getElementById('desktop-search-input').value = query || '';
+            document.getElementById('mobile-search-input').value = query || '';
+        }
+
+        function filterByCategory(cat) {
+            activeCategory = activeCategory === cat ? '' : cat;
+            // Update toggle visuals
+            const toggleMap = { 'SUV': 'toggle-suv', 'Sedan': 'toggle-sedan', 'Esportivo': 'toggle-esportivo', 'Caminhonete': 'toggle-caminhonete' };
+            Object.entries(toggleMap).forEach(([key, id]) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (activeCategory === key) {
+                    el.className = 'w-8 h-4 bg-red-600 rounded-full relative';
+                    el.innerHTML = '<div class="w-3 h-3 bg-white rounded-full absolute right-1 top-0.5"></div>';
+                } else {
+                    el.className = 'w-8 h-4 bg-zinc-700 rounded-full relative';
+                    el.innerHTML = '<div class="w-3 h-3 bg-zinc-400 rounded-full absolute left-1 top-0.5"></div>';
+                }
+            });
+            filterVehicles(document.getElementById('desktop-search-input').value);
+            closeMobileMenu();
+        }
+
+        // ── SCROLL TO FINANCING & AUTO-FILL ──
+        function scrollToFinanciamento(carName) {
+            if (carName) {
+                document.getElementById('carroDesejado').value = carName;
+            }
+            document.getElementById('financiamento').scrollIntoView({ behavior: 'smooth' });
+            closeMobileMenu();
+        }
+
+        // ── WHATSAPP ──
+        function enviarParaWhatsApp() {
+            const nome = document.getElementById('nomeCliente').value.trim();
+            const carro = document.getElementById('carroDesejado').value.trim();
+            const entrada = document.getElementById('valorEntrada').value.trim();
+
+            if (!nome || !carro) {
+                alert("Por favor, preencha o seu nome e o carro desejado!");
+                return;
+            }
+
+            const numeroLoja = "5511999999999";
+            const entradaTexto = entrada ? `R$ ${Number(entrada).toLocaleString('pt-BR')}` : 'não informado';
+            const mensagem = `Olá! Meu nome é ${nome}. Quero simular um financiamento para o carro: *${carro}*. Tenho ${entradaTexto} para dar de entrada.`;
+            const url = `https://wa.me/${numeroLoja}?text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
