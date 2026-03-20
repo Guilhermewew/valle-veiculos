@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valle Autos — Painel Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --red: #a31616;
+  --red-hover: #cc1b1b;
+  --red-glow: rgba(163,22,22,0.3);
+  --black: #0a0a0a;
+  --black2: #111;
+  --black3: #1a1a1a;
+  --black4: #222;
+  --border: #2a2a2a;
+  --border-red: rgba(163,22,22,0.3);
+  --text: #e8e8e8;
+  --muted: #888;
+  --sidebar-w: 240px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  display: flex;
+  overflow-x: hidden;
+}
+
+/* ── LOGIN ── */
+#login-screen {
+  position: fixed; inset: 0;
+  background: var(--black);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  flex-direction: column;
+  gap: 0;
+}
+#login-screen::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(163,22,22,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.login-box {
+  background: var(--black3);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--red);
+  padding: 48px 40px;
+  width: 360px;
+  position: relative;
+  animation: fadeUp .5s ease;
+}
+.login-logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.login-logo .logo-mark {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: .1em;
+  color: var(--text);
+}
+.login-logo .logo-mark span { color: var(--red); }
+.login-logo .sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .65rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  background: var(--black2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: 'Barlow', sans-serif;
+  font-size: .9rem;
+  transition: border-color .2s;
+  outline: none;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--red);
+}
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-group select { appearance: none; cursor: pointer; }
+
+.btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  padding: 11px 24px;
+  transition: background .2s, transform .15s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-red { background: var(--red); color: white; }
+.btn-red:hover { background: var(--red-hover); }
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--red); color: var(--text); }
+.btn-danger { background: #7a0e0e; color: white; }
+.btn-danger:hover { background: #9a1111; }
+.btn-success { background: #0e5e2e; color: white; }
+.btn-success:hover { background: #127a3c; }
+.btn-full { width: 100%; justify-content: center; }
+
+#login-error {
+  color: var(--red);
+  font-size: .78rem;
+  text-align: center;
+  min-height: 20px;
+  margin-top: -8px;
+  margin-bottom: 12px;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--black2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform .3s;
+}
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: .1em;
+  color: var(--text);
+}
+.sidebar-logo span { color: var(--red); }
+.sidebar-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .6rem;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.sidebar-section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .6rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: rgba(136,136,136,.4);
+  padding: 20px 20px 8px;
+}
+
+.sidebar-nav { padding: 8px 0; flex: 1; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 20px;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .85rem;
+  letter-spacing: .08em;
+  color: var(--muted);
+  transition: color .2s, background .2s;
+  position: relative;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,.03); }
+.nav-item.active {
+  color: var(--text);
+  background: rgba(163,22,22,.08);
+  border-left-color: var(--red);
+}
+.nav-item .nav-icon { width: 16px; text-align: center; font-size: .8rem; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--red);
+  color: white;
+  font-size: .6rem;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+.sidebar-user {
+  display: flex; align-items: center; gap: 10px;
+}
+.user-avatar {
+  width: 32px; height: 32px;
+  background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: .9rem;
+  color: white;
+  flex-shrink: 0;
+}
+.user-name {
+  font-size: .82rem;
+  color: var(--text);
+  line-height: 1.2;
+}
+.user-role {
+  font-size: .65rem;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.btn-logout {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: .85rem;
+  transition: color .2s;
+}
+.btn-logout:hover { color: var(--red); }
+
+/* ── MAIN ── */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#topbar {
+  background: var(--black2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: .08em;
+  color: var(--text);
+}
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.topbar-date {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── PAGES ── */
+.page { display: none; padding: 32px; }
+.page.active { display: block; animation: fadeUp .3s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── DASHBOARD ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--black3);
+  border: 1px solid var(--border);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.stat-card:hover { border-color: var(--border-red); }
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s;
+}
+.stat-card:hover::after { transform: scaleX(1); }
+.stat-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .65rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.stat-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-change {
+  font-size: .72rem;
+  color: #2ecc71;
+}
+.stat-change.down { color: #e74c3c; }
+.stat-icon {
+  position: absolute;
+  top: 20px; right: 20px;
+  font-size: 1.6rem;
+  color: rgba(163,22,22,.3);
+}
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+}
+
+.panel {
+  background: var(--black3);
+  border: 1px solid var(--border);
+  padding: 0;
+  overflow: hidden;
+}
+.panel-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .75rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.panel-body { padding: 20px; }
+
+/* Activity Feed */
+.activity-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.activity-dot.green { background: #2ecc71; }
+.activity-dot.yellow { background: #f39c12; }
+.activity-text { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+.activity-text strong { color: var(--text); }
+.activity-time {
+  font-size: .68rem;
+  color: rgba(136,136,136,.5);
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+/* ── TABELA ── */
+.table-wrapper { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead tr {
+  border-bottom: 1px solid var(--border);
+}
+th {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .65rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 12px 16px;
+  text-align: left;
+  white-space: nowrap;
+}
+td {
+  padding: 14px 16px;
+  font-size: .85rem;
+  border-bottom: 1px solid rgba(42,42,42,.5);
+  vertical-align: middle;
+}
+tr:hover td { background: rgba(255,255,255,.015); }
+.td-img {
+  width: 52px; height: 38px;
+  object-fit: cover;
+  background: var(--black4);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+  font-size: .7rem;
+  flex-shrink: 0;
+}
+td img { width: 52px; height: 38px; object-fit: cover; }
+.badge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  display: inline-block;
+}
+.badge-green { background: rgba(46,204,113,.12); color: #2ecc71; border: 1px solid rgba(46,204,113,.2); }
+.badge-red { background: rgba(163,22,22,.12); color: #e74c3c; border: 1px solid rgba(163,22,22,.2); }
+.badge-yellow { background: rgba(243,156,18,.12); color: #f39c12; border: 1px solid rgba(243,156,18,.2); }
+.badge-gray { background: rgba(136,136,136,.1); color: var(--muted); border: 1px solid var(--border); }
+
+.action-btns { display: flex; gap: 6px; }
+.action-btn {
+  width: 30px; height: 30px;
+  background: var(--black4);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem;
+  transition: all .2s;
+}
+.action-btn:hover { border-color: var(--red); color: var(--text); background: rgba(163,22,22,.08); }
+.action-btn.del:hover { border-color: #e74c3c; color: #e74c3c; background: rgba(231,76,60,.08); }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  display: flex; gap: 12px; align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.search-box {
+  display: flex; align-items: center; gap: 0;
+  background: var(--black3);
+  border: 1px solid var(--border);
+  flex: 1; max-width: 320px;
+}
+.search-box input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  padding: 9px 14px;
+  font-size: .85rem;
+  outline: none;
+  flex: 1;
+  font-family: 'Barlow', sans-serif;
+}
+.search-box i { padding: 0 12px; color: var(--muted); font-size: .8rem; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.85);
+  z-index: 500;
+  display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: var(--black3);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--red);
+  width: 560px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: .06em;
+  color: var(--text);
+}
+.modal-close {
+  background: none; border: none;
+  color: var(--muted); cursor: pointer;
+  font-size: 1.1rem;
+  transition: color .2s;
+}
+.modal-close:hover { color: var(--red); }
+.modal-body { padding: 24px; }
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 10px; justify-content: flex-end;
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+/* ── LEADS ── */
+.lead-card {
+  background: var(--black4);
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  display: flex; gap: 16px; align-items: flex-start;
+  transition: border-color .2s;
+}
+.lead-card:hover { border-color: var(--border-red); }
+.lead-avatar {
+  width: 40px; height: 40px;
+  background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  color: white;
+  flex-shrink: 0;
+}
+.lead-name {
+  font-weight: 600;
+  font-size: .9rem;
+  margin-bottom: 3px;
+}
+.lead-detail { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.lead-time { margin-left: auto; font-size: .7rem; color: rgba(136,136,136,.5); white-space: nowrap; }
+
+/* ── SETTINGS ── */
+.settings-section {
+  background: var(--black3);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.settings-section-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .75rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+}
+.settings-section-header i { color: var(--red); }
+.settings-body { padding: 20px; }
+.settings-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(42,42,42,.5);
+}
+.settings-row:last-child { border-bottom: none; padding-bottom: 0; }
+.settings-row-label { font-size: .85rem; }
+.settings-row-sub { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+.toggle {
+  width: 44px; height: 24px;
+  background: var(--black4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+  flex-shrink: 0;
+}
+.toggle.on { background: var(--red); border-color: var(--red); }
+.toggle::after {
+  content: '';
+  width: 18px; height: 18px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px; left: 2px;
+  transition: transform .2s;
+}
+.toggle.on::after { transform: translateX(20px); }
+
+/* ── CATEGORIAS ── */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.cat-card {
+  background: var(--black3);
+  border: 1px solid var(--border);
+  padding: 20px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: border-color .2s;
+  position: relative;
+}
+.cat-card.active { border-color: var(--red); }
+.cat-card.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--red);
+}
+.cat-icon { font-size: 1.5rem; color: var(--red); }
+.cat-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .95rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text);
+}
+.cat-count { font-size: .75rem; color: var(--muted); }
+.cat-actions { display: flex; gap: 6px; margin-top: auto; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--black2); }
+::-webkit-scrollbar-thumb { background: var(--red); }
+
+/* notification toast */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--black3);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--red);
+  padding: 14px 20px;
+  font-size: .85rem;
+  z-index: 9999;
+  animation: slideIn .3s ease;
+  max-width: 320px;
+}
+.toast.success { border-left-color: #2ecc71; }
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* page header */
+.page-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 28px;
+}
+.page-header-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: .04em;
+  line-height: 1;
+}
+.page-header-sub {
+  font-size: .8rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .dash-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-mark">VALLE <span>AUTOS</span></div>
+      <div class="sub">Painel Administrativo</div>
+    </div>
+    <div class="form-group">
+      <label>Usuário</label>
+      <input type="text" id="login-user" placeholder="admin" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div id="login-error"></div>
+    <button class="btn btn-red btn-full" onclick="doLogin()">
+      <i class="fas fa-sign-in-alt"></i> Entrar
+    </button>
+    <p style="text-align:center;font-size:.7rem;color:var(--muted);margin-top:16px">
+      Credenciais: <strong style="color:var(--text)">admin</strong> / <strong style="color:var(--text)">1234</strong>
+    </p>
+  </div>
+</div>
+
+<!-- ── SIDEBAR ── -->
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">VALLE <span>AUTOS</span></div>
+    <div class="sidebar-sub">Admin Panel</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-title">Principal</div>
+    <div class="nav-item active" onclick="showPage('dashboard', this)">
+      <i class="nav-icon fas fa-th-large"></i> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('veiculos', this)">
+      <i class="nav-icon fas fa-car"></i> Veículos
+      <span class="nav-badge" id="badge-veiculos">3</span>
+    </div>
+    <div class="nav-item" onclick="showPage('categorias', this)">
+      <i class="nav-icon fas fa-tags"></i> Categorias
+    </div>
+    <div class="sidebar-section-title">Clientes</div>
+    <div class="nav-item" onclick="showPage('leads', this)">
+      <i class="nav-icon fas fa-comments"></i> Leads / Pedidos
+      <span class="nav-badge" id="badge-leads">4</span>
+    </div>
+    <div class="sidebar-section-title">Configurações</div>
+    <div class="nav-item" onclick="showPage('site', this)">
+      <i class="nav-icon fas fa-globe"></i> Dados do Site
+    </div>
+    <div class="nav-item" onclick="showPage('config', this)">
+      <i class="nav-icon fas fa-cog"></i> Configurações
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar">A</div>
+      <div>
+        <div class="user-name">Admin</div>
+        <div class="user-role">Administrador</div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()" title="Sair">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div id="main">
+  <div id="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="topbar-actions">
+      <span class="topbar-date" id="topbar-date"></span>
+    </div>
+  </div>
+
+  <!-- ── PAGE: DASHBOARD ── -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="stat-icon fas fa-car"></i>
+        <div class="stat-label">Veículos no Estoque</div>
+        <div class="stat-value" id="stat-veiculos">3</div>
+        <div class="stat-change">↑ +1 este mês</div>
+      </div>
+      <div class="stat-card">
+        <i class="stat-icon fas fa-comments"></i>
+        <div class="stat-label">Leads Recebidos</div>
+        <div class="stat-value">4</div>
+        <div class="stat-change">↑ +2 esta semana</div>
+      </div>
+      <div class="stat-card">
+        <i class="stat-icon fab fa-instagram"></i>
+        <div class="stat-label">Seguidores Instagram</div>
+        <div class="stat-value">10,5K</div>
+        <div class="stat-change">↑ +300 este mês</div>
+      </div>
+      <div class="stat-card">
+        <i class="stat-icon fas fa-eye"></i>
+        <div class="stat-label">Visitas no Site</div>
+        <div class="stat-value">847</div>
+        <div class="stat-change">↑ +12% semana</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <!-- Últimos veículos -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Últimos Veículos Cadastrados</span>
+          <button class="btn btn-ghost" style="padding:6px 14px;font-size:.7rem" onclick="showPage('veiculos', document.querySelectorAll('.nav-item')[1])">Ver todos</button>
+        </div>
+        <div class="panel-body" style="padding:0">
+          <table>
+            <thead><tr>
+              <th>Veículo</th><th>KM</th><th>Motor</th><th>Status</th>
+            </tr></thead>
+            <tbody id="dash-table-veiculos"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Atividade -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Atividade Recente</span>
+        </div>
+        <div class="panel-body" style="padding:16px 20px">
+          <div class="activity-item">
+            <div class="activity-dot green"></div>
+            <div class="activity-text"><strong>Lead recebido</strong> — Carlos pediu simulação para o Corolla XEI</div>
+            <div class="activity-time">há 5min</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>Veículo adicionado</strong> — Mercedes C300 2024</div>
+            <div class="activity-time">há 1h</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot yellow"></div>
+            <div class="activity-text"><strong>Lead recebido</strong> — Ana perguntou sobre o Jeep Compass</div>
+            <div class="activity-time">há 3h</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot green"></div>
+            <div class="activity-text"><strong>Lead recebido</strong> — João pediu simulação de financiamento</div>
+            <div class="activity-time">ontem</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>Site atualizado</strong> — Número WhatsApp alterado</div>
+            <div class="activity-time">ontem</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: VEÍCULOS ── -->
+  <div class="page" id="page-veiculos">
+    <div class="page-header">
+      <div>
+        <div class="page-header-title">Veículos</div>
+        <div class="page-header-sub">Gerencie o estoque de veículos do site</div>
+      </div>
+      <button class="btn btn-red" onclick="openModal('add')">
+        <i class="fas fa-plus"></i> Novo Veículo
+      </button>
+    </div>
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Buscar veículo..." oninput="filterVeiculos(this.value)">
+      </div>
+      <select style="background:var(--black3);border:1px solid var(--border);color:var(--text);padding:9px 14px;font-family:'Barlow',sans-serif;font-size:.85rem;outline:none" onchange="filterCat(this.value)">
+        <option value="">Todas as categorias</option>
+        <option value="SUV">SUVs</option>
+        <option value="Sedan">Sedans</option>
+        <option value="Esportivo">Esportivos</option>
+        <option value="Caminhonete">Caminhonetes</option>
+      </select>
+    </div>
+    <div class="panel">
+      <div class="table-wrapper">
+        <table>
+          <thead><tr>
+            <th>Imagem</th>
+            <th>Veículo</th>
+            <th>Ano</th>
+            <th>KM</th>
+            <th>Motor</th>
+            <th>Transmissão</th>
+            <th>Categoria</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr></thead>
+          <tbody id="veiculos-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: CATEGORIAS ── -->
+  <div class="page" id="page-categorias">
+    <div class="page-header">
+      <div>
+        <div class="page-header-title">Categorias</div>
+        <div class="page-header-sub">Categorias exibidas na barra lateral do site</div>
+      </div>
+    </div>
+    <div class="cat-grid" id="cat-grid"></div>
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Ativar / Desativar Categorias</span>
+      </div>
+      <div class="panel-body">
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:16px">Categorias ativas aparecem com o toggle vermelho no site público.</p>
+        <div id="cat-toggles"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: LEADS ── -->
+  <div class="page" id="page-leads">
+    <div class="page-header">
+      <div>
+        <div class="page-header-title">Leads & Pedidos</div>
+        <div class="page-header-sub">Simulações de financiamento recebidas pelo site</div>
+      </div>
+      <button class="btn btn-success" onclick="exportLeads()">
+        <i class="fas fa-file-export"></i> Exportar
+      </button>
+    </div>
+    <div id="leads-list"></div>
+  </div>
+
+  <!-- ── PAGE: SITE ── -->
+  <div class="page" id="page-site">
+    <div class="page-header">
+      <div>
+        <div class="page-header-title">Dados do Site</div>
+        <div class="page-header-sub">Textos e informações exibidos no site público</div>
+      </div>
+      <button class="btn btn-red" onclick="saveSite()">
+        <i class="fas fa-save"></i> Salvar Alterações
+      </button>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-header"><i class="fas fa-heading"></i> Hero — Seção Principal</div>
+      <div class="settings-body">
+        <div class="form-group">
+          <label>Subtítulo (linha vermelha)</label>
+          <input type="text" id="site-sub" value="VEÍCULOS EXCLUSIVOS.">
+        </div>
+        <div class="form-group">
+          <label>Título Principal</label>
+          <input type="text" id="site-titulo" value="EXPERIÊNCIA PREMIUM.">
+        </div>
+        <div class="form-group">
+          <label>Descrição</label>
+          <input type="text" id="site-desc" value="Encontre o seu próximo destino.">
+        </div>
+        <div class="form-group">
+          <label>Texto do Botão</label>
+          <input type="text" id="site-btn" value="Fale com um Especialista">
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-header"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+      <div class="settings-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Número WhatsApp (com DDI)</label>
+            <input type="text" id="site-wa" value="5511999999999" placeholder="5511999999999">
+          </div>
+          <div class="form-group">
+            <label>Mensagem padrão do formulário</label>
+            <input type="text" id="site-wa-msg" value="Olá! Quero simular um financiamento.">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-header"><i class="fas fa-info-circle"></i> Rodapé</div>
+      <div class="settings-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome da Empresa</label>
+            <input type="text" id="site-empresa" value="Valle Autos Veículos">
+          </div>
+          <div class="form-group">
+            <label>Ano</label>
+            <input type="text" id="site-ano" value="2026">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Endereço (exibido no footer)</label>
+          <input type="text" id="site-end" placeholder="Rua, número — Cidade, Estado">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: CONFIG ── -->
+  <div class="page" id="page-config">
+    <div class="page-header">
+      <div>
+        <div class="page-header-title">Configurações</div>
+        <div class="page-header-sub">Preferências do painel administrativo</div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-header"><i class="fas fa-lock"></i> Segurança</div>
+      <div class="settings-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nova Senha</label>
+            <input type="password" id="new-pass" placeholder="Nova senha">
+          </div>
+          <div class="form-group">
+            <label>Confirmar Senha</label>
+            <input type="password" id="confirm-pass" placeholder="Confirmar senha">
+          </div>
+        </div>
+        <button class="btn btn-red" onclick="changePass()"><i class="fas fa-key"></i> Alterar Senha</button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-header"><i class="fas fa-sliders-h"></i> Preferências</div>
+      <div class="settings-body">
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Notificações de Leads</div>
+            <div class="settings-row-sub">Exibir badge quando novos leads chegarem</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Auto-abrir WhatsApp em Leads</div>
+            <div class="settings-row-sub">Abre o WhatsApp automaticamente ao clicar no lead</div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Modo Manutenção</div>
+            <div class="settings-row-sub">Exibe página de manutenção para visitantes</div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL VEÍCULO ── -->
+<div class="modal-overlay" id="modal-veiculo">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-veiculo-title">Novo Veículo</div>
+      <button class="modal-close" onclick="closeModal('modal-veiculo')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="veiculo-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Marca</label>
+          <input type="text" id="v-marca" placeholder="Ex: Mercedes-Benz">
+        </div>
+        <div class="form-group">
+          <label>Modelo</label>
+          <input type="text" id="v-modelo" placeholder="Ex: C300">
+        </div>
+      </div>
+      <div class="form-row triple">
+        <div class="form-group">
+          <label>Ano</label>
+          <input type="text" id="v-ano" placeholder="2024">
+        </div>
+        <div class="form-group">
+          <label>KM</label>
+          <input type="text" id="v-km" placeholder="Ex: 20 km">
+        </div>
+        <div class="form-group">
+          <label>Motor</label>
+          <input type="text" id="v-motor" placeholder="Ex: 2.0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Transmissão</label>
+          <select id="v-trans">
+            <option>Automático</option>
+            <option>Manual</option>
+            <option>CVT</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="v-cat">
+            <option>SUV</option>
+            <option>Sedan</option>
+            <option>Esportivo</option>
+            <option>Caminhonete</option>
+            <option>Hatchback</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>URL da Imagem</label>
+        <input type="text" id="v-img" placeholder="https://...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Preço (R$)</label>
+          <input type="text" id="v-preco" placeholder="Ex: 250.000">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="v-status">
+            <option value="Disponível">Disponível</option>
+            <option value="Reservado">Reservado</option>
+            <option value="Vendido">Vendido</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-veiculo')">Cancelar</button>
+      <button class="btn btn-red" onclick="saveVeiculo()"><i class="fas fa-save"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL CONFIRMAR DELETE ── -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal" style="width:380px">
+    <div class="modal-header">
+      <div class="modal-title">Confirmar Exclusão</div>
+      <button class="modal-close" onclick="closeModal('modal-delete')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--muted);font-size:.88rem;line-height:1.6">Tem certeza que deseja remover este veículo do estoque? Esta ação não pode ser desfeita.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-delete')">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmDelete()"><i class="fas fa-trash"></i> Excluir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+let veiculos = JSON.parse(localStorage.getItem('va_veiculos') || 'null') || [
+  { id:1, marca:'Mercedes-Benz', modelo:'C300', ano:'2024', km:'20 km', motor:'2.0', trans:'Automático', cat:'Sedan', img:'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=300', preco:'250.000', status:'Disponível' },
+  { id:2, marca:'Toyota', modelo:'Corolla XEI', ano:'2023', km:'30 mil', motor:'2.0', trans:'Automático', cat:'Sedan', img:'https://images.unsplash.com/photo-1629897048514-3dd7414cdf27?auto=format&fit=crop&q=80&w=300', preco:'142.900', status:'Disponível' },
+  { id:3, marca:'Ford', modelo:'Ranger XLS', ano:'2022', km:'50 mil', motor:'V6', trans:'Automático', cat:'Caminhonete', img:'https://images.unsplash.com/photo-1559416523-140ddc3d238c?auto=format&fit=crop&q=80&w=300', preco:'185.000', status:'Reservado' }
+];
+
+let leads = [
+  { id:1, nome:'Carlos Souza', carro:'Toyota Corolla XEI', entrada:'15000', hora:'há 5min' },
+  { id:2, nome:'Ana Lima', carro:'Jeep Compass', entrada:'30000', hora:'há 3h' },
+  { id:3, nome:'João Mendes', carro:'Mercedes C300', entrada:'50000', hora:'ontem' },
+  { id:4, nome:'Fernanda Costa', carro:'Ford Ranger', entrada:'20000', hora:'2 dias atrás' }
+];
+
+let cats = [
+  { name:'SUVs', icon:'fa-car-side', active:true },
+  { name:'Sedans', icon:'fa-car', active:false },
+  { name:'Esportivos', icon:'fa-flag-checkered', active:true },
+  { name:'Caminhonetes', icon:'fa-truck-pickup', active:false }
+];
+
+let deleteTarget = null;
+
+function save() { localStorage.setItem('va_veiculos', JSON.stringify(veiculos)); }
+
+// ── LOGIN ──
+function doLogin() {
+  const u = document.getElementById('login-user').value;
+  const p = document.getElementById('login-pass').value;
+  const cred = JSON.parse(localStorage.getItem('va_cred') || '{"u":"admin","p":"1234"}');
+  if (u === cred.u && p === cred.p) {
+    document.getElementById('login-screen').style.display = 'none';
+    init();
+  } else {
+    document.getElementById('login-error').textContent = 'Usuário ou senha incorretos.';
+    document.getElementById('login-pass').value = '';
+  }
+}
+
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').textContent = '';
+}
+
+// ── INIT ──
+function init() {
+  const now = new Date();
+  document.getElementById('topbar-date').textContent =
+    now.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+  renderVeiculos();
+  renderDashTable();
+  renderLeads();
+  renderCats();
+}
+
+// ── PAGES ──
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = { dashboard:'Dashboard', veiculos:'Veículos', categorias:'Categorias', leads:'Leads & Pedidos', site:'Dados do Site', config:'Configurações' };
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+  if (id === 'veiculos') renderVeiculos();
+  if (id === 'leads') renderLeads();
+  if (id === 'categorias') renderCats();
+}
+
+// ── VEÍCULOS ──
+let filteredVeiculos = null;
+
+function renderVeiculos(list) {
+  const data = list || veiculos;
+  document.getElementById('badge-veiculos').textContent = veiculos.filter(v=>v.status==='Disponível').length;
+  document.getElementById('stat-veiculos').textContent = veiculos.length;
+  const tbody = document.getElementById('veiculos-tbody');
+  tbody.innerHTML = data.map(v => `
+    <tr>
+      <td><img src="${v.img || ''}" onerror="this.style.display='none'" alt="${v.modelo}"></td>
+      <td><strong>${v.marca}</strong><br><span style="color:var(--muted);font-size:.78rem">${v.modelo}</span></td>
+      <td>${v.ano}</td>
+      <td>${v.km}</td>
+      <td>${v.motor}</td>
+      <td>${v.trans}</td>
+      <td><span class="badge badge-gray">${v.cat}</span></td>
+      <td>${statusBadge(v.status)}</td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn" onclick="openModal('edit',${v.id})" title="Editar"><i class="fas fa-pen"></i></button>
+          <button class="action-btn del" onclick="askDelete(${v.id})" title="Excluir"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function statusBadge(s) {
+  if (s === 'Disponível') return `<span class="badge badge-green">${s}</span>`;
+  if (s === 'Reservado') return `<span class="badge badge-yellow">${s}</span>`;
+  return `<span class="badge badge-red">${s}</span>`;
+}
+
+function filterVeiculos(q) {
+  const f = veiculos.filter(v =>
+    (v.marca + ' ' + v.modelo).toLowerCase().includes(q.toLowerCase())
+  );
+  renderVeiculos(f);
+}
+
+function filterCat(cat) {
+  renderVeiculos(cat ? veiculos.filter(v => v.cat === cat) : veiculos);
+}
+
+// ── MODAL ──
+function openModal(mode, id) {
+  const m = document.getElementById('modal-veiculo');
+  if (mode === 'add') {
+    document.getElementById('modal-veiculo-title').textContent = 'Novo Veículo';
+    ['v-marca','v-modelo','v-ano','v-km','v-motor','v-img','v-preco'].forEach(f => document.getElementById(f).value = '');
+    document.getElementById('v-trans').value = 'Automático';
+    document.getElementById('v-cat').value = 'SUV';
+    document.getElementById('v-status').value = 'Disponível';
+    document.getElementById('veiculo-id').value = '';
+  } else {
+    const v = veiculos.find(x => x.id === id);
+    document.getElementById('modal-veiculo-title').textContent = 'Editar Veículo';
+    document.getElementById('veiculo-id').value = v.id;
+    document.getElementById('v-marca').value = v.marca;
+    document.getElementById('v-modelo').value = v.modelo;
+    document.getElementById('v-ano').value = v.ano;
+    document.getElementById('v-km').value = v.km;
+    document.getElementById('v-motor').value = v.motor;
+    document.getElementById('v-trans').value = v.trans;
+    document.getElementById('v-cat').value = v.cat;
+    document.getElementById('v-img').value = v.img;
+    document.getElementById('v-preco').value = v.preco;
+    document.getElementById('v-status').value = v.status;
+  }
+  m.classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function saveVeiculo() {
+  const eid = document.getElementById('veiculo-id').value;
+  const dados = {
+    marca: document.getElementById('v-marca').value,
+    modelo: document.getElementById('v-modelo').value,
+    ano: document.getElementById('v-ano').value,
+    km: document.getElementById('v-km').value,
+    motor: document.getElementById('v-motor').value,
+    trans: document.getElementById('v-trans').value,
+    cat: document.getElementById('v-cat').value,
+    img: document.getElementById('v-img').value,
+    preco: document.getElementById('v-preco').value,
+    status: document.getElementById('v-status').value
+  };
+  if (!dados.marca || !dados.modelo) { showToast('Preencha ao menos Marca e Modelo!', false); return; }
+  if (eid) {
+    const idx = veiculos.findIndex(v => v.id === +eid);
+    veiculos[idx] = { ...veiculos[idx], ...dados };
+    showToast('Veículo atualizado com sucesso!', true);
+  } else {
+    veiculos.push({ id: Date.now(), ...dados });
+    showToast('Veículo adicionado ao estoque!', true);
+  }
+  save(); closeModal('modal-veiculo'); renderVeiculos(); renderDashTable();
+}
+
+function askDelete(id) {
+  deleteTarget = id;
+  document.getElementById('modal-delete').classList.add('open');
+}
+
+function confirmDelete() {
+  veiculos = veiculos.filter(v => v.id !== deleteTarget);
+  save(); closeModal('modal-delete'); renderVeiculos(); renderDashTable();
+  showToast('Veículo removido do estoque.', false);
+}
+
+// ── DASHBOARD TABLE ──
+function renderDashTable() {
+  const tbody = document.getElementById('dash-table-veiculos');
+  tbody.innerHTML = veiculos.slice(0,4).map(v => `
+    <tr>
+      <td><strong>${v.marca}</strong> ${v.modelo} <span style="color:var(--muted);font-size:.75rem">(${v.ano})</span></td>
+      <td style="color:var(--muted)">${v.km}</td>
+      <td style="color:var(--muted)">${v.motor}</td>
+      <td>${statusBadge(v.status)}</td>
+    </tr>
+  `).join('');
+}
+
+// ── LEADS ──
+function renderLeads() {
+  document.getElementById('badge-leads').textContent = leads.length;
+  document.getElementById('leads-list').innerHTML = leads.map(l => `
+    <div class="lead-card">
+      <div class="lead-avatar">${l.nome[0]}</div>
+      <div style="flex:1">
+        <div class="lead-name">${l.nome}</div>
+        <div class="lead-detail">
+          🚗 <strong>${l.carro}</strong><br>
+          💰 Entrada: R$ ${Number(l.entrada).toLocaleString('pt-BR')}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+        <div class="lead-time">${l.hora}</div>
+        <a href="https://wa.me/5511999999999?text=${encodeURIComponent('Olá '+l.nome+'! Vi sua simulação para o '+l.carro+'.')}" target="_blank" class="btn btn-success" style="padding:6px 14px;font-size:.7rem;text-decoration:none">
+          <i class="fab fa-whatsapp"></i> Responder
+        </a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function exportLeads() {
+  const csv = 'Nome,Carro,Entrada,Hora\n' + leads.map(l => `${l.nome},${l.carro},${l.entrada},${l.hora}`).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'leads_valle_autos.csv';
+  a.click();
+  showToast('Leads exportados com sucesso!', true);
+}
+
+// ── CATEGORIAS ──
+function renderCats() {
+  document.getElementById('cat-grid').innerHTML = cats.map((c,i) => `
+    <div class="cat-card ${c.active ? 'active' : ''}">
+      <i class="cat-icon fas ${c.icon}"></i>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-count">${veiculos.filter(v=>v.cat===c.name.replace('s','')||v.cat===c.name).length} veículos</div>
+      <div class="cat-actions">
+        <div class="toggle ${c.active ? 'on' : ''}" onclick="toggleCat(${i})"></div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('cat-toggles').innerHTML = cats.map((c,i) => `
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label"><i class="fas ${c.icon}" style="color:var(--red);margin-right:8px"></i>${c.name}</div>
+        <div class="settings-row-sub">${c.active ? 'Ativa no site' : 'Oculta no site'}</div>
+      </div>
+      <div class="toggle ${c.active ? 'on' : ''}" onclick="toggleCat(${i})"></div>
+    </div>
+  `).join('');
+}
+
+function toggleCat(i) {
+  cats[i].active = !cats[i].active;
+  renderCats();
+  showToast(`Categoria "${cats[i].name}" ${cats[i].active ? 'ativada' : 'desativada'}!`, cats[i].active);
+}
+
+// ── SITE ──
+function saveSite() {
+  showToast('Configurações do site salvas!', true);
+}
+
+// ── CONFIG ──
+function changePass() {
+  const np = document.getElementById('new-pass').value;
+  const cp = document.getElementById('confirm-pass').value;
+  if (!np) { showToast('Digite a nova senha!', false); return; }
+  if (np !== cp) { showToast('As senhas não coincidem!', false); return; }
+  const cred = JSON.parse(localStorage.getItem('va_cred') || '{"u":"admin","p":"1234"}');
+  localStorage.setItem('va_cred', JSON.stringify({ u: cred.u, p: np }));
+  document.getElementById('new-pass').value = '';
+  document.getElementById('confirm-pass').value = '';
+  showToast('Senha alterada com sucesso!', true);
+}
+
+// ── TOAST ──
+function showToast(msg, success) {
+  const t = document.createElement('div');
+  t.className = 'toast' + (success ? ' success' : '');
+  t.innerHTML = `<i class="fas fa-${success?'check':'exclamation'}-circle" style="margin-right:8px;color:${success?'#2ecc71':'var(--red)'}"></i>${msg}`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// Close modal on outside click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
