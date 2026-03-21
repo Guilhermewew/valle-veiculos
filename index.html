@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valle Autos Veículos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+body{background-color:#0a0a0a;color:#fff}
+.hero-bg{background-image:linear-gradient(to right,rgba(10,10,10,.9) 20%,rgba(10,10,10,.3) 100%),url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=1919');background-size:cover;background-position:center}
+.card-bg{background-color:#1a1a1a;border:1px solid #333}
+.btn-red{background-color:#a31616;transition:background-color .3s}
+.btn-red:hover{background-color:#cc1b1b}
+/* MOBILE DRAWER */
+#mobile-menu{display:none;position:fixed;inset:0;z-index:200}
+#mobile-menu.open{display:block}
+#mobile-menu-overlay{position:absolute;inset:0;background:rgba(0,0,0,.7)}
+#mobile-menu-drawer{position:absolute;top:0;right:0;width:280px;max-width:85vw;height:100%;background:#111;border-left:1px solid #333;display:flex;flex-direction:column;animation:sfr .3s ease;overflow-y:auto}
+@keyframes sfr{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.mnl{display:flex;align-items:center;gap:12px;padding:16px 24px;border-bottom:1px solid #222;color:#d1d5db;font-size:.95rem;font-weight:500;cursor:pointer;transition:color .2s,background .2s;text-decoration:none}
+.mnl:hover,.mnl.active{color:#ef4444;background:rgba(163,22,22,.06)}
+/* CATS COLLAPSE MOBILE */
+#cat-toggle{display:none}
+@media(max-width:767px){#cat-toggle{display:flex}#cat-list{display:none}#cat-list.open{display:block}}
+/* HERO MOBILE */
+@media(max-width:640px){.hero-section{min-height:380px;height:auto!important;padding:48px 0}.hero-title{font-size:2.2rem!important}}
+/* SKELETON */
+.sk{background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);background-size:200% 100%;animation:sh 1.5s infinite;border-radius:8px}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* CAROUSEL */
+.carousel{position:relative;overflow:hidden;border-radius:8px;background:#111;flex-shrink:0}
+.carousel-track{display:flex;transition:transform .35s ease}
+.carousel-track img{min-width:100%;width:100%;height:100%;object-fit:cover;display:block;flex-shrink:0}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.6);border:none;color:white;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.65rem;transition:background .2s;z-index:2;border-radius:2px}
+.carousel-btn:hover{background:rgba(163,22,22,.8)}
+.carousel-btn.prev{left:4px}
+.carousel-btn.next{right:4px}
+.carousel-dots{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:2}
+.carousel-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:background .2s}
+.carousel-dot.active{background:white}
+.no-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a1a1a}
+</style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+
+<!-- MOBILE DRAWER -->
+<div id="mobile-menu">
+  <div id="mobile-menu-overlay" onclick="closeMM()"></div>
+  <div id="mobile-menu-drawer">
+    <div style="padding:20px 24px;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-weight:700;font-size:.95rem;color:#fff">Valle Autos</span>
+      <button onclick="closeMM()" style="background:none;border:none;color:#888;font-size:1.2rem;cursor:pointer"><i class="fas fa-times"></i></button>
+    </div>
+    <div style="padding:14px 20px;border-bottom:1px solid #222">
+      <div style="display:flex">
+        <input type="text" id="msearch" placeholder="Buscar…" oninput="filterV(this.value)" style="flex:1;background:#222;border:1px solid #444;border-right:none;color:#fff;padding:9px 12px;font-size:.85rem;outline:none;border-radius:4px 0 0 4px">
+        <button style="background:#a31616;border:none;color:#fff;padding:9px 12px;cursor:pointer;border-radius:0 4px 4px 0"><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+    <div class="mnl active"><i class="fas fa-home" style="color:#ef4444;width:16px;text-align:center"></i>Início</div>
+    <a href="#estoque" class="mnl" onclick="closeMM()"><i class="fas fa-car" style="width:16px;text-align:center"></i>Estoque</a>
+    <a href="#financiamento" class="mnl" onclick="closeMM()"><i class="fas fa-file-invoice-dollar" style="width:16px;text-align:center"></i>Financiamento</a>
+    <div class="mnl"><i class="fas fa-info-circle" style="width:16px;text-align:center"></i>Sobre Nós</div>
+    <div style="padding:20px;margin-top:auto">
+      <button onclick="scrollFin()" class="btn-red" style="width:100%;color:#fff;font-weight:700;padding:12px;border:none;border-radius:8px;cursor:pointer;font-size:.9rem"><i class="fab fa-whatsapp" style="margin-right:8px"></i>Fale com um Especialista</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="border-b border-zinc-800 bg-black/90 sticky top-0 z-50 backdrop-blur-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-12 h-12 rounded-full border-2 border-zinc-600 flex items-center justify-center bg-black relative overflow-hidden">
+        <span class="text-red-700 font-bold text-2xl" style="transform:scaleY(-1);margin-bottom:8px">V</span>
+        <span class="text-red-700 font-bold text-2xl absolute mt-4">V</span>
+      </div>
+      <span class="hidden sm:block font-bold text-white text-sm tracking-wider">VALLE AUTOS</span>
+    </div>
+    <nav class="hidden md:flex gap-6 text-sm font-medium text-zinc-300">
+      <a href="#" class="text-red-500 border-b-2 border-red-500 pb-1">Início</a>
+      <a href="#estoque" class="hover:text-white transition-colors">Estoque</a>
+      <a href="#financiamento" class="hover:text-white transition-colors">Financiamento</a>
+      <a href="#" class="hover:text-white transition-colors">Sobre Nós</a>
+      <a href="#" class="hover:text-white transition-colors">Contato</a>
+    </nav>
+    <div class="hidden md:flex items-center">
+      <div class="relative">
+        <input type="text" id="dsearch" placeholder="Buscar Veículo…" oninput="filterV(this.value)" class="bg-zinc-900 border border-zinc-700 text-white px-4 py-2 rounded-l-md focus:outline-none focus:border-red-600 text-sm w-48">
+        <button class="btn-red px-4 py-2 rounded-r-md absolute right-0 top-0 bottom-0 border-none cursor-pointer"><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+    <button onclick="openMM()" class="md:hidden text-zinc-300 hover:text-white p-2"><i class="fas fa-bars text-2xl"></i></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero-bg hero-section h-[500px] flex items-center">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <div class="max-w-2xl">
+      <h2 class="text-red-600 font-bold tracking-wider text-xl mb-2">VEÍCULOS EXCLUSIVOS.</h2>
+      <h1 class="hero-title text-5xl font-extrabold text-white mb-4 leading-tight">EXPERIÊNCIA PREMIUM.</h1>
+      <p class="text-xl text-zinc-300 mb-8">Encontre o seu próximo destino.</p>
+      <button onclick="scrollFin()" class="btn-red text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all border-none cursor-pointer">Fale com um Especialista</button>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main id="estoque" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex flex-col md:flex-row gap-8">
+  <!-- SIDEBAR CATS -->
+  <aside class="w-full md:w-64 flex-shrink-0">
+    <div class="card-bg rounded-xl overflow-hidden">
+      <button id="cat-toggle" onclick="toggleCats()" class="w-full flex items-center justify-between p-4 text-white font-bold uppercase tracking-wider text-sm" style="background:none;border:none;cursor:pointer">
+        <span>Categorias</span><i class="fas fa-chevron-down text-red-500" id="cat-chev" style="transition:transform .3s"></i>
+      </button>
+      <div class="hidden md:block px-6 pt-6 pb-2"><h3 class="text-lg font-bold text-white uppercase tracking-wider">Categorias</h3></div>
+      <ul id="cat-list" class="space-y-4 px-6 pb-6 pt-2">
+        <li class="flex items-center justify-between group cursor-pointer" onclick="filterCat('SUV')">
+          <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors"><i class="fas fa-car-side"></i><span>SUVs</span></div>
+          <div class="w-8 h-4 rounded-full relative ctog" id="tog-suv" data-cat="SUV"><div class="w-3 h-3 rounded-full absolute top-0.5"></div></div>
+        </li>
+        <li class="flex items-center justify-between group cursor-pointer" onclick="filterCat('Sedan')">
+          <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors"><i class="fas fa-car"></i><span>Sedans</span></div>
+          <div class="w-8 h-4 rounded-full relative ctog" id="tog-sedan" data-cat="Sedan"><div class="w-3 h-3 rounded-full absolute top-0.5"></div></div>
+        </li>
+        <li class="flex items-center justify-between group cursor-pointer" onclick="filterCat('Esportivo')">
+          <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors"><i class="fas fa-flag-checkered"></i><span>Esportivos</span></div>
+          <div class="w-8 h-4 rounded-full relative ctog" id="tog-esportivo" data-cat="Esportivo"><div class="w-3 h-3 rounded-full absolute top-0.5"></div></div>
+        </li>
+        <li class="flex items-center justify-between group cursor-pointer" onclick="filterCat('Caminhonete')">
+          <div class="flex items-center gap-3 text-zinc-400 group-hover:text-white transition-colors"><i class="fas fa-truck-pickup"></i><span>Caminhonetes</span></div>
+          <div class="w-8 h-4 rounded-full relative ctog" id="tog-caminhonete" data-cat="Caminhonete"><div class="w-3 h-3 rounded-full absolute top-0.5"></div></div>
+        </li>
+        <li class="pt-2 border-t border-zinc-700">
+          <button onclick="filterCat('')" class="text-xs text-zinc-500 hover:text-red-400 w-full text-left"><i class="fas fa-times mr-1"></i>Limpar filtro</button>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- GRID -->
+  <div class="flex-grow flex flex-col gap-4">
+    <div id="no-results" class="hidden text-center py-16 text-zinc-500">
+      <i class="fas fa-search text-4xl mb-4 block text-zinc-700"></i>
+      <p class="text-lg">Nenhum veículo encontrado.</p>
+      <button onclick="filterV('')" class="mt-4 text-red-500 text-sm hover:underline">Ver todos</button>
+    </div>
+    <div id="load-err" class="hidden text-center py-16 text-zinc-500">
+      <i class="fas fa-exclamation-circle text-4xl mb-4 block text-zinc-700"></i>
+      <p class="text-lg">Erro ao carregar o estoque.</p>
+      <button onclick="loadVehicles()" class="mt-4 text-red-500 text-sm hover:underline">Tentar novamente</button>
+    </div>
+    <div id="vgrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- skeleton -->
+      <div class="card-bg rounded-xl p-4 flex gap-4"><div class="sk w-48 h-36 rounded-lg flex-shrink-0"></div><div class="flex flex-col gap-3 flex-grow"><div class="sk h-4 rounded w-3/4"></div><div class="sk h-3 rounded w-1/2"></div><div class="sk h-3 rounded w-2/3"></div><div class="sk h-8 rounded mt-auto"></div></div></div>
+      <div class="card-bg rounded-xl p-4 flex gap-4"><div class="sk w-48 h-36 rounded-lg flex-shrink-0"></div><div class="flex flex-col gap-3 flex-grow"><div class="sk h-4 rounded w-3/4"></div><div class="sk h-3 rounded w-1/2"></div><div class="sk h-3 rounded w-2/3"></div><div class="sk h-8 rounded mt-auto"></div></div></div>
+    </div>
+  </div>
+</main>
+
+<!-- FINANCIAMENTO -->
+<section id="financiamento" class="bg-zinc-900 py-16 border-t border-zinc-800">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl font-bold text-white mb-2">Simule o seu Financiamento</h2>
+    <p class="text-zinc-400 mb-8">Preencha os dados e fale com nossa equipe diretamente pelo WhatsApp.</p>
+    <div class="card-bg p-6 rounded-xl flex flex-col gap-4 text-left">
+      <div><label class="block text-zinc-300 text-sm font-bold mb-2">O seu Nome</label><input type="text" id="nome" placeholder="Como se chama?" class="w-full bg-black border border-zinc-700 text-white px-4 py-2 rounded focus:outline-none focus:border-red-600"></div>
+      <div><label class="block text-zinc-300 text-sm font-bold mb-2">Qual carro deseja?</label><input type="text" id="carro" placeholder="Ex: Jeep Commander" class="w-full bg-black border border-zinc-700 text-white px-4 py-2 rounded focus:outline-none focus:border-red-600"></div>
+      <div><label class="block text-zinc-300 text-sm font-bold mb-2">Valor da Entrada (R$)</label><input type="number" id="entrada" placeholder="Ex: 20000" class="w-full bg-black border border-zinc-700 text-white px-4 py-2 rounded focus:outline-none focus:border-red-600"></div>
+      <button type="button" onclick="enviarWA()" class="btn-red w-full text-white font-bold py-3 rounded-md mt-4 text-lg border-none cursor-pointer"><i class="fab fa-whatsapp mr-2"></i>Pedir Simulação no WhatsApp</button>
+    </div>
+  </div>
+</section>
+
+<footer class="bg-black border-t border-zinc-900 py-6 text-center text-zinc-500 text-sm">
+  <p>&copy; 2026 Valle Autos Veículos. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+// ============================================================
+// CONFIGURAÇÃO SUPABASE — substitua pelos seus dados
+// ============================================================
+const SUPABASE_URL  = 'https://bybgahshnmowuggpefnm.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5YmdhaHNobm1vd3VnZ3BlZm5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMzQ5NjUsImV4cCI6MjA4OTYxMDk2NX0.fywP3lrOVG1H7S8mMnot1rFY2j2PX9ubZSKq-rd_Ys4';
+// ============================================================
+
+let allV = [], activeCat = '';
+
+function parseImgs(v){
+  const raw = v.imgs || v.img || '';
+  if(!raw) return [];
+  if(Array.isArray(raw)) return raw.filter(Boolean);
+  const s = String(raw).trim();
+  if(s.startsWith('[')) try{ return JSON.parse(s).filter(Boolean); }catch(e){}
+  if(s.startsWith('http') || s.startsWith('data:')) return [s];
+  return [];
+}
+
+async function loadVehicles(){
+  const grid   = document.getElementById('vgrid');
+  const errEl  = document.getElementById('load-err');
+  errEl.classList.add('hidden');
+  // skeleton
+  grid.innerHTML = Array(4).fill('').map(()=>`
+    <div class="card-bg rounded-xl p-4 flex gap-4">
+      <div class="sk w-48 h-36 rounded-lg flex-shrink-0"></div>
+      <div class="flex flex-col gap-3 flex-grow">
+        <div class="sk h-4 rounded w-3/4"></div>
+        <div class="sk h-3 rounded w-1/2"></div>
+        <div class="sk h-3 rounded w-2/3"></div>
+        <div class="sk h-8 rounded mt-auto"></div>
+      </div>
+    </div>`).join('');
+  try{
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2.49.4');
+    const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const { data: rows, error } = await sb
+      .from('veiculos')
+      .select('*')
+      .neq('status', 'Vendido')
+      .order('criado_em', { ascending: false });
+    if(error) throw error;
+    allV = rows.map(r => ({ ...r, imgs: parseImgs(r) }));
+    renderCards(allV);
+  }catch(e){
+    console.error(e);
+    grid.innerHTML = '';
+    errEl.classList.remove('hidden');
+  }
+}
+
+function renderCards(list){
+  const grid  = document.getElementById('vgrid');
+  const noRes = document.getElementById('no-results');
+  const filt  = list.filter(v => !activeCat || v.cat === activeCat);
+  if(!filt.length){ grid.innerHTML = ''; noRes.classList.remove('hidden'); return; }
+  noRes.classList.add('hidden');
+  grid.innerHTML = filt.map(v => makeCard(v)).join('');
+  document.querySelectorAll('[data-carousel]').forEach(el => initCarousel(el));
+}
+
+function makeCard(v){
+  const imgs = v.imgs || [];
+  const statusBadge = v.status === 'Reservado'
+    ? `<span class="text-xs bg-yellow-900/30 text-yellow-400 border border-yellow-400/20 px-2 py-0.5 rounded flex-shrink-0">Reservado</span>` : '';
+  const carouselId = 'c-' + v.id;
+
+  let imgSection = '';
+  if(imgs.length === 0){
+    imgSection = `<div class="w-full sm:w-48 h-36 bg-zinc-900 rounded-lg flex-shrink-0 flex items-center justify-center"><i class="fas fa-car text-3xl text-zinc-700"></i></div>`;
+  } else if(imgs.length === 1){
+    imgSection = `<div class="w-full sm:w-48 h-36 rounded-lg flex-shrink-0 overflow-hidden bg-zinc-900"><img src="${esc(imgs[0])}" alt="${esc(v.marca+' '+v.modelo)}" style="width:100%;height:100%;object-fit:cover" onerror="this.closest('div').innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center\'><i class=\'fas fa-car text-3xl\' style=\'color:#374151\'></i></div>'"></div>`;
+  } else {
+    const dots   = imgs.map((_,i)=>`<div class="carousel-dot${i===0?' active':''}" onclick="gotoDot(event,'${carouselId}',${i})"></div>`).join('');
+    const slides = imgs.map(u=>`<img src="${esc(u)}" alt="${esc(v.marca)}" onerror="this.style.display='none'" loading="lazy">`).join('');
+    imgSection = `
+      <div class="carousel w-full sm:w-48 h-36 flex-shrink-0" data-carousel id="${carouselId}" data-idx="0" data-total="${imgs.length}">
+        <div class="carousel-track" style="width:${imgs.length*100}%">${slides}</div>
+        <button class="carousel-btn prev" onclick="carPrev(event,'${carouselId}')"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-btn next" onclick="carNext(event,'${carouselId}')"><i class="fas fa-chevron-right"></i></button>
+        <div class="carousel-dots">${dots}</div>
+      </div>`;
+  }
+
+  const trans = v.trans ? v.trans.slice(0,3)+'.' : '';
+  return `
+    <div class="card-bg rounded-xl p-4 flex flex-col sm:flex-row gap-4 hover:border-red-900 transition-colors">
+      ${imgSection}
+      <div class="flex flex-col justify-between flex-grow">
+        <div>
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-bold text-base leading-tight uppercase">${esc(v.marca)}<br>${esc(v.modelo)}${v.ano?' ('+esc(v.ano)+')':''}</h4>
+            ${statusBadge}
+          </div>
+          <div class="flex flex-wrap gap-4 text-xs text-zinc-400 mb-3">
+            ${v.km?`<div class="text-center"><span class="block font-bold text-white">${esc(v.km)}</span>KM</div>`:''}
+            ${trans?`<div class="text-center"><span class="block font-bold text-white">${esc(trans)}</span>Trans.</div>`:''}
+            ${v.motor?`<div class="text-center"><span class="block font-bold text-white">${esc(v.motor)}</span>Motor</div>`:''}
+          </div>
+          ${v.preco?`<p class="text-red-500 font-bold">R$ ${esc(v.preco)}</p>`:''}
+        </div>
+        <button onclick="scrollFin('${esc(v.marca+' '+v.modelo)}')" class="btn-red w-full text-white text-sm font-bold py-2 rounded-md border-none cursor-pointer mt-3">Ver Detalhes</button>
+      </div>
+    </div>`;
+}
+
+// CAROUSEL
+function carNext(e,id){e.stopPropagation();const el=document.getElementById(id);let i=+el.dataset.idx;i=(i+1)%+el.dataset.total;goTo(el,i);}
+function carPrev(e,id){e.stopPropagation();const el=document.getElementById(id);let i=+el.dataset.idx;i=(i-1+el.dataset.total*1)%+el.dataset.total;goTo(el,i);}
+function gotoDot(e,id,i){e.stopPropagation();goTo(document.getElementById(id),i);}
+function goTo(el,i){el.dataset.idx=i;const n=+el.dataset.total;el.querySelector('.carousel-track').style.transform=`translateX(-${i*(100/n)}%)`;el.querySelectorAll('.carousel-dot').forEach((d,j)=>d.classList.toggle('active',j===i));}
+function initCarousel(el){el.querySelector('.carousel-track').style.width=(el.dataset.total*100)+'%';el.querySelectorAll('.carousel-track img').forEach(img=>{img.style.width=(100/el.dataset.total)+'%';img.style.height='144px';img.style.flexShrink='0';img.style.objectFit='cover';});}
+
+// FILTER
+function filterV(q){
+  const s=(q||'').toLowerCase().trim();
+  document.getElementById('dsearch').value=q||'';
+  document.getElementById('msearch').value=q||'';
+  if(!s){renderCards(allV);return;}
+  renderCards(allV.filter(v=>(v.marca+' '+v.modelo).toLowerCase().includes(s)));
+}
+function filterCat(cat){
+  activeCat=(activeCat===cat)?'':cat;
+  document.querySelectorAll('.ctog').forEach(el=>{
+    const on=el.dataset.cat===activeCat;
+    el.className=`w-8 h-4 rounded-full relative ctog ${on?'bg-red-600':'bg-zinc-700'}`;
+    const dot=el.querySelector('div');
+    if(dot)dot.className=`w-3 h-3 rounded-full absolute top-0.5 ${on?'bg-white right-1':'bg-zinc-400 left-1'}`;
+  });
+  renderCards(allV);
+  closeMM();
+}
+
+// MOBILE MENU
+function openMM(){document.getElementById('mobile-menu').classList.add('open');document.body.style.overflow='hidden';}
+function closeMM(){document.getElementById('mobile-menu').classList.remove('open');document.body.style.overflow='';}
+function toggleCats(){const l=document.getElementById('cat-list');const c=document.getElementById('cat-chev');l.classList.toggle('open');c.style.transform=l.classList.contains('open')?'rotate(180deg)':'rotate(0deg)';}
+
+// FINANCING
+function scrollFin(car){if(car)document.getElementById('carro').value=car;document.getElementById('financiamento').scrollIntoView({behavior:'smooth'});closeMM();}
+function enviarWA(){
+  const n=document.getElementById('nome').value.trim();
+  const c=document.getElementById('carro').value.trim();
+  const e=document.getElementById('entrada').value.trim();
+  if(!n||!c){alert('Preencha seu nome e o carro desejado!');return;}
+  const et=e?'R$ '+Number(e).toLocaleString('pt-BR'):'não informado';
+  const msg=`Olá! Meu nome é ${n}. Quero simular financiamento do carro: *${c}*. Entrada: ${et}.`;
+  window.open('https://wa.me/5511999999999?text='+encodeURIComponent(msg),'_blank');
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+loadVehicles();
+</script>
+</body>
+</html>
